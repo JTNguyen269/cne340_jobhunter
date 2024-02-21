@@ -2,9 +2,12 @@ import mysql.connector
 import time
 import json
 import requests
-from datetime import date
+from datetime import datetime
 import html2text
 
+
+# John Nguyen
+# CNE340 Winter 2024
 
 # Connect to database
 # You may need to edit the connect function based on your local settings.#I made a password for my database because it is important to do so. Also make sure MySQL server is running or it will not connect
@@ -47,14 +50,13 @@ def add_new_job(cursor, jobdetails):
 
 # Check if new job
 def check_if_job_exists(cursor, jobdetails):
-    job_description = html2text.html2text(jobdetails['description'])
-    query = f'SELECT * FROM jobs WHERE Description = "{job_description}"'
+    query = "SELECT * FROM jobs WHERE Job_id = \"%s\"" % jobdetails['id']
     return query_sql(cursor, query)
+
 
 # Deletes job
 def delete_job(cursor, jobdetails):
-    job_details = jobdetails['description']
-    query = f'DELETE FROM jobs WHERE Description = "{job_details}"'
+    query = "DELETE FROM jobs WHERE Job_id = \"%s\"" % jobdetails['id']
     return query_sql(cursor, query)
 
 
@@ -82,6 +84,7 @@ def add_or_delete_job(jobpage, cursor):
         cursor.fetchall()) > 0  # https://stackoverflow.com/questions/2511679/python-number-of-rows-affected-by-cursor-executeselect
 
         if is_job_found:
+            delete_job(cursor, jobdetail)
             print(f'Existing job already listed in DB {jobdetail}')
 
         else:
